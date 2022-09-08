@@ -34,7 +34,7 @@ model Password {
   id String @id @unique @default(uuid())
   title String
   site String?
-  password String
+  encrypted String
   iv String
   userId String
   User User @relation(fields: [userId], references: [id], onDelete: Cascade)
