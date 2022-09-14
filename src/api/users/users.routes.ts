@@ -10,7 +10,6 @@ router.get(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { userId } = req.payload;
-      console.log(userId);
       const user = await findUserById(userId);
       delete (<{ password?: string }>user).password;
       res.json(user);
