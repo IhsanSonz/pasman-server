@@ -1,25 +1,27 @@
-import { Prisma } from '@prisma/client';
 import { db } from 'utils/db';
 import { encrypt } from 'utils/encryptionHandler';
 
 export const findPasswordBySiteOrTitle = (id: string, query: string) => {
-  let where: Object[] = [];
-  if (!!query)
-    query
-      .trim()
-      .split(' ')
-      .map((q) => {
-        where.push({ title: { contains: q as string } });
-        where.push({ site: { contains: q as string } });
-      });
-  const or: Prisma.PasswordWhereInput = !!query
-    ? {
-        OR: [...where],
-      }
-    : {};
+  query = query.trim().split(' ').join(' | ');
   return db.password.findMany({
     where: {
-      AND: [{ userId: id }, { ...or }],
+      AND: [
+        { userId: id },
+        {
+          OR: [
+            {
+              title: {
+                search: query,
+              },
+            },
+            {
+              site: {
+                search: query,
+              },
+            },
+          ],
+        },
+      ],
     },
   });
 };
